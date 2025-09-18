@@ -21,3 +21,4 @@
     remote_src: yes
 
 #Tags in Ansible allow you to run only specific tasks or skip specific tasks inside a playbook.
+# while running the playbook , we give -t tagname
