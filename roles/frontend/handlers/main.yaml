@@ -3,6 +3,11 @@
     state: restarted
     name: nginx
 
-# handlers because in frontend configuration, whenever we try to change/configure the nginx file..
-# we have to restart nginx and we use notify command/module in tasks/main.yaml to restart nginx
-# whenver neccessary instead of multiple time restarts, so we use handlers by using ( notify: )
+# # handlers because in frontend configuration, whenever we try to change/configure the nginx file..
+# # we have to restart nginx and we use notify command/module in tasks/main.yaml to restart nginx
+# # whenver neccessary instead of multiple time restarts, so we use handlers by using ( notify: )
+# Handlers = special tasks that run only when notified by other tasks.
+
+# Used for actions like restart service after config change.
+
+# They run once at the end of play (even if notified many times).
