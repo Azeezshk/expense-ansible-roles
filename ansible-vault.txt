@@ -1,0 +1,104 @@
+--->>> how to create ansible vault
+
+            ansible-vault create vault.yaml
+            after running playbook
+            - password : your_wish
+            - confirm password
+            after it will open the vault file and we can enter : 
+            -mysql root password for example
+            file content to add - mysql_root_password: ExpenseApp@1
+
+--->>> cat vault.yaml 
+            
+            it will be encrypted text
+
+--->>> ansible-vault view vault.yaml - view vault file
+            
+            enter password
+
+--->>> ansible-vault edit vault.yaml - edit and change vault file
+            
+            enter password
+
+--->>> to use vault file, we store ex: vault.yaml
+            
+            in vars folder in roles folder of expense-ansible-roles repo
+
+            - we store the encrypted message of vault.yaml in the above file for example
+            - if password has to be taken from vault.yaml, we have to give 
+                variable in mysql.yaml for example
+                vars_files:
+                - roles/mysql/vars/vault.yaml ---> path of vault.yaml vars_files
+            - and when we run the playbook we have to give the command
+                
+                ansible-playbook -i inventory.ini --ask-vault-pass mysql.yaml 
+
+                here: --ask-vault-pass will ask our password and decrypt the encrypted message
+                    that we have stored in vault.yaml and then the playbook will run successfully
+
+--->>> we can skip the --ask-vault-pass in the command line
+       by giving or storing in the ansible.cf file
+       
+       i.e  ask_vault_pass = True
+
+       and after running the playbook normally without ask-vault-pass, it will directly take the command from
+       the configuration file and ask for vault password and playbook will run successfully.
+
+--->>>  This is easy in manually , but 
+        In automation environments, while running the project tasks-playbooks , we cant manually give the passwords in prompt,
+         
+        so, we can store vault password in a file and refer it whenever the prompt asks for the password for automation tasks
+        for example we can store the vault file in /home/ec2-user as mysql_vault_pass
+            
+            - echo "ex: password for vault" > mysql_vault_pass
+        
+            
+            - while running the playbook we have to use this command 
+
+               --vault-password-file and the path for the file 
+
+               ex: ansible-playbook -inventory.ini mysql.yaml --vault-password-file /home/ec2-user/mysql_vault_pass 
+
+            - we can store it in the ansible.cfg file instead of running in the command line
+
+                as: vault_password_file = /home/ec2-use/mysql_vault_pass
+                in ansible.cfg file 
+
+
+
+--->> Recent implementation in the project
+
+        - Ansible Vault
+        - AWS is a Platform as a Service
+        - Above scenario, saving vault password in server is also risky
+        - Recent Implementation in our project:
+            we configure servers through ansible vaults. we have the challenges to store them in the server , it was too risky to store.
+            why cant we use aws platform to store and manage passwords through ssm and secret manager, so,
+            so , we integrated ansible with AWS ssm parameter and secrets manager to store the passwords
+            Ansible vaults - decommissioned
+            and replaced with secret manager/ parameter store
+            secret manager is bit  costlier than parameter store
+            so we used parameter store
+        
+        - create parameter 
+            
+            Name: /expense/mysql/mysql_root_password
+            Tier: standard
+            Type: SecureString
+            
+            and Value: ExpenseApp@1 ex:passowrd to store in the value format
+            and create finally
+        
+        - How to access this password for the task we run in the ansible
+            search ansible ssm paramter and find the plug-in 
+            and by using:
+
+            example in mysql server playbook for login_password
+            we give the variable login_password as :
+            login_password: "{{ lookup('amazon.aws.aws_ssm', '/expense/mysql/mysql_root_password', decrypt=True) }}"
+
+            here amazon.aws.aws_ssm is plugin
+            /expense/mysql/mysql_root_password is aws paramter we created
+            decrypt=True for decrypt the password
+             
+
