@@ -1,0 +1,8 @@
+- name: Restart Nginx
+  ansible.builtin.service:
+    state: restarted
+    name: nginx
+
+# handlers because in frontend configuration, whenever we try to change/configure the nginx file..
+# we have to restart nginx and we use notify command/module in tasks/main.yaml to restart nginx
+# whenver neccessary instead of multiple time restarts, so we use handlers by using ( notify: )

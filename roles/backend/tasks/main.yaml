@@ -18,7 +18,7 @@
 
 - name: include from common role
   # tags: 
-  # - deployment
+  # - deployment #Tags in Ansible allow you to run only specific tasks or skip specific tasks inside a playbook. 
   include_role:
     name: common
     tasks_from: main

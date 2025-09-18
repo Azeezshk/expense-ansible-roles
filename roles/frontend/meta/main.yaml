@@ -1,2 +1,5 @@
 dependencies:
 - roles: common
+
+# we used common tasks for both frontend and backend
+# that's why we used common role and tasks wherever we needed to reduce code
