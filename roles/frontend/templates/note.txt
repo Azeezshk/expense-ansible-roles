@@ -1,0 +1,7 @@
+Templates in Ansible = files with variables.
+
+File ends with .j2 (Jinja2).
+
+Placeholders like {{ variable }} get replaced with real values when playbook runs.
+
+Used for dynamic config files (nginx, mysql, etc.).
